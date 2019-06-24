@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    * {
+        box-sizing: border-box;
+        }
+    .text {
+        font-size:12px;
+        }
+
+    #form {
+        background-color: tan;
+        width: 200px;
+        height: 320px;
+        padding: 1px 12px;
+        }
+
+    button {
+        position: relative;
+        top: 10px;
+        left: 50px;
+        cursor: pointer;
+    }
+
+    #displays {
+        position: absolute;
+        top: 8px;
+        left: 201px;
+        background-color:rgb(240, 240, 242);
+        width: 300px;
+        height: 320px;
+        padding: 0px 10px;                
+        
+    }
+
+    #num {
+        width: 145px
+    }
+    
+ /*    #replys{
+        position: absolute;
+        top: 8px;
+        left: 250px;
+    } */
+
+    #demo1 {
+        position: absolute;
+        top: 0px;
+        left: 350px;
+        font-size: 25px;
+    }
+
+    #reply1 {
+        position: absolute;
+        top: 45px;
+        right: 120px;
+    }
+
+    
+
+    
+ 
+</style>   
+</head>
+
+<body>
+    <form id = "form">
+        <p>Return on Investment</p>
+
+        <!-- Packages -->
+        <p class="text" id="text1">Choose a sponsorship package</p>
+        <select id="package">
+            <option disabled selected value> -- select an option -- </option>
+            <option value="standard">Standard Package</option>
+            <option value="military">Military Standard</option>
+            <option value="term">Term Investment</option>
+            <option value="starter">Starter Plan</option>
+            <option value="basal">Basal Plan</option>
+            <option value="reduced">Reduced Package</option>
+            <option value="studentStandard">Student Standard</option>
+            <option value="studentBasal">Student Basal</option>
+            <option value="corper">Corpers Plan</option>                
+        </select><br>
+
+        <p class="text" id="text2">Enter number of slots</p>
+        <input id="num" type="number" oninvalid="this.setCustomValidity('Minimuim investment for this package is ₦50,000')"
+        oninput="this.setCustomValidity('')"  placeholder="Number of slots"><br>
+        <p class="text" id = "text3" >Pick start date</p>
+        <input type ="date" id = "day1">
+        <p class="text" id = "text4">Pick end date</p>
+        <input type ="date" id = "day2">
+
+
+        <button type="submit" id="sub">Calculate</button>
+    </form>
+    <div id="displays">
+        <div id="demos">
+            <p id="demo1">Payout</p>
+            <p id="demo2">Total amount contributed</p>
+            <p id="demo3">Interest accrued</p>
+            <p id="demo4">Liquidation value</p>
+        </div>
+        <div id="replys">
+            <p class="reply" id="reply1">reply1</p>
+            <p class="reply" id="reply2">reply2</p>
+            <p class="reply" id="reply3">reply3</p>
+            <p class="reply" id="reply4">reply4</p>
+        </div>    
+    </div>
+
+<script>
+    let form = document.getElementById("form");
+    let val = document.getElementById("num");
+    let a, interest;
+    var start = document.getElementById("day1");
+    var stop = document.getElementById("day2");
+
+    form.addEventListener("submit", cal);
+
+    function cal(e) {
+      
+        e.preventDefault();
+        var x = document.getElementById("package");
+        var i = x.selectedIndex;
+        var o = x.options[i].text;
+        var x = parseFloat(val.value);
+
+        let startDate = new Date(start.value);
+        let stopDate = new Date(stop.value);
+        let dateMonth = startDate.getMonth();
+        let yyyy = startDate.getFullYear();
+        let mm = startDate.getMonth() + 1;
+        let dd = startDate.getDate();
+        let m;
+        m = Math.floor((Date.UTC(stopDate.getFullYear(), stopDate.getMonth(), stopDate.getDate()) 
+        - Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) ) /(1000 * 60 * 60 * 24));
+        console.log(m);
+ 
+        // the math
+         if (val.value == '') {  
+           console.log("Please enter the amount you would like to invest");
+
+        } else if (m == '') {
+            console.log("Please enter the duration of investment");
+
+            // Standard Package
+        // } else if (o == "Standard Package") {
+        //     console.log("Minimuim investment allowed this package is 50,000");
+        //     let endDate = (yyyy+1)+'-'+mm+'-'+(dd+1);
+        //     console.log(endDate)
+        //     document.getElementById("day2").setAttribute("max", endDate)
+
+        } else if (o === "Standard Package" && m < 91 ) {            
+            let s = 50000 * x;
+            let d = 0.00123 * s;
+            a = (s) + ((m-1) * d);
+            let lq = a - (0.2 * a);
+            console.log(a);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (0 == "Standard Package" && m > 90) {
+            let s = 50000 * x;
+            let d = 0.00123 * s;
+            a = (s) + ((m-1) * d);
+            console.log(a);
+            console.log(o);
+        
+
+            // Military Standard
+        } else if (o == "Military Standard" && m < 91) {
+            let s = 50000 * x;
+            let d = 0.00138 * s;
+            a = (s) + ((m-1) * d);
+            let lq = a - (0.15 * a);
+            console.log(a);
+            console.log("liquidation " + lq);
+            console.log(o);    
+        } else if (o === "Military Standard") {
+            let s = 50000 * x;
+            let d = 0.00138 * s;
+            a = (s) + ((m-1) * d);
+            interest = a - x;
+            console.log(a);
+            console.log(o);
+            
+            // Basal Plan
+        } else if (o == "Basal Plan" && m < 366 ) {
+            let s = 500 * x;
+            let d = 0.0012 * s;
+            let amount = (m * s);
+            let interest = ((m/2) * ((2 * d) + ((m - 1)*(d))));
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Basal Plan" && m > 365 && m < 395) {
+            // 2nd cycle
+            let s = 500 * x
+            let d = 0.0012 * s
+            let amount = (365 * s);
+            let interest = ((365/2) * ((2 * d) + ((365 - 1)*(d))));
+            let m2 = m - 365
+            let newInterest = (interest + 219) + ((m2 -1) * (219));
+            a = amount + newInterest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + newInterest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Basal Plan" && m == 395) {
+            let s = 500 * x
+            let d = 0.0012 * s
+            let amount = (365 * s);
+            let interest = ((365/2) * ((2 * d) + ((365 - 1)*(d))));
+            let m2 = m - 365
+            let newInterest = (interest + 219) + ((m2 -1) * (219));
+            a = amount + newInterest;
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + newInterest);
+            console.log(o);
+            
+
+            
+            // Term Investment 
+        } else if (o == "Term Investment" && m < 183) {
+            // 1st cycle
+            a = (25000) + ((m-1) * 27.53);
+            let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.2);
+            console.log("invested " + s);
+            console.log("total " + s2);
+            console.log("Liquidation Value " + lq)
+            console.log(o);
+        } else if (o == "Term Investment" && m > 182 && m < 366)  {
+            // cycle 2
+            let m2 = m - 182;
+             a = ((25000) + ((183-1) * 27.53)) + ((m2 - 1) * (55.06))
+             let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.2);
+            console.log("invested " + s);
+            console.log("total " + s2);
+            console.log("Liquidation Value " + lq);
+            console.log(o);
+        } else if (o == "Term Investment" && m > 365 && m < 550) {
+            // 3rd cycle
+            let m3 = m - 365;
+            a = (((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((m3 - 1) * (82.59));
+            let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.2);
+            console.log("invested " + s);
+            console.log("total " + s2);
+            console.log("Liquidation Value " + lq); 
+            console.log(o);
+        } else if (o == "Term Investment" && m > 549 && m < 730) {
+            // 4th cycle
+            let m4 = m - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((m4 -1) * (110.12)); 
+            let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.2);
+            console.log("invested " + s);
+            console.log("total " + s2);
+            console.log("Liquidation Value " + lq); 
+            console.log(o);
+        } else if (o == "Term Investment" && m == 730) {
+            //final day
+            let m4 = m - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((m4 -1) * (110.12)); 
+            let s = 25000 * x;
+            let s2 = a * x;
+            console.log("invested " + s);
+            console.log("total " + s2);
+            console.log(o);    
+
+            // Starter Plan 
+        } else if (o == "Starter Plan" && m < 183) {
+            // 1st cycle
+            a = (25000) + ((m-1) * 27.53);
+            let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.15);
+            console.log("invested " + s);
+            console.log("total " + s2);
+            console.log("Liquidation Value " + lq); 
+            console.log(o);
+            } else if (o == "Starter Plan" && m > 182 && m < 366)  {
+            // cycle 2
+            let m2 = m - 182;
+            a = ((25000) + ((183-1) * 27.53)) + ((m2 - 1) * (55.06))
+            let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.15);
+            console.log("invested " + s);
+            console.log("total " + s2); 
+            console.log("Liquidation Value " + lq); 
+            console.log(o);
+            console.log(m2);
+        } else if (o == "Starter Plan" && m > 365 && m < 550) {
+            // 3rd cycle
+            let m3 = m - 365;
+            a = (((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((m3 - 1) * (82.59));
+            let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.15);
+            console.log("invested " + s);
+            console.log("total " + s2);
+            console.log("Liquidation Value " + lq); 
+            console.log(o);
+            console.log(m3);
+        } else if (o == "Starter Plan" && m > 549 && m < 730) {
+            // 4th cycle
+            let m4 = m - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((m4 -1) * (137.65));
+            let s = 25000 * x;
+            let s2 = a * x;
+            let lq = s2 - (s2 * 0.15);
+            console.log("invested " + s);
+            console.log("total " + s2);     
+            console.log("Liquidation Value " + lq); 
+            console.log(o);
+            console.log(m4);
+        } else if (o == "Starter Plan" && m == 730) {
+            // final day
+            let m4 = m - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((m4 -1) * (137.65));
+            let s = 25000 * x;
+            let s2 = a * x;
+            console.log("invested " + s);
+            console.log("total " + s2);     
+            console.log(o);
+            console.log(m4);
+
+            // Reduced Package
+        } else if (o == "Reduced Package" && m < 91 ) {            
+            let s = 2000 * x;
+            let d = 0.00123 * s;
+            a = (s) + ((m-1) * d);
+            let lq = a - (0.2 * a);
+            console.log(a);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (0 == "Reduced Package" && m > 90) {
+            let s = 2000 * x;
+            let d = 0.00123 * s;
+            a = (s) + ((m-1) * d);
+            console.log(a);
+            console.log(o);  
+
+                 // Student Package
+        } else if (o == "Student Package" && m < 91 ) {            
+            let s = 5000 * x;
+            let d = 0.00123 * s;
+            a = (s) + ((m-1) * d);
+            let lq = a - (0.2 * a);
+            console.log(a);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (0 == "Student Package" && m > 90) {
+            let s = 5000 * x;
+            let d = 0.00123 * s;
+            a = (s) + ((m-1) * d);
+            console.log(a);
+            console.log(o);  
+
+            
+            // Student Basal 
+        } else if (o == "Student Basal" && m < 366 ) {
+            let s = 200 * x;
+            let d = 0.0012 * s;
+            let amount = (m * s);
+            let interest = ((m/2) * ((2 * d) + ((m - 1)*(d))));
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Student Basal" && m > 365) {
+            // 2nd cycle
+            let s = 200 * x;
+            let d = 0.0012 * s;
+            let amount = (365 * s);
+            let interest = ((365/2) * ((2 * d) + ((365 - 1)*(d))));
+            let m2 = m - 365;
+            let newInterest = (interest + 219) + ((m2 -1) * (219));
+            a = amount + newInterest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + newInterest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        
+
+           // Corpers Plan
+        } else if (o == "Corpers Plan" && m < 31 ) {
+            // 1st cycle
+            amount = 5000 * x;
+            let interest = (m * 6) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 30 && m < 61) {
+            // 2nd cycle
+            let amount = (10000) * x;
+            let interest = (180 + (12 * (m - 30))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 60 && m < 91) {
+            // 3rd cycle
+            let amount = (15000) * x;
+            let interest = (540 + (18 * (m - 60))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 90 && m < 121) {
+            // 4th cycle
+            let amount = (20000) * x;
+            let interest = (1080 + (24 * (m - 90))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 120 && m < 151) {
+            // 5th cycle
+            let amount = (25000) * x;
+            let interest = (1800 + (30 * (m - 120))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 150 && m < 181) {
+            // 6th cycle
+            let amount = (30000) * x;
+            let interest = (2700 + (36 * (m - 150))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 180 && m < 211) {
+            // 7th cycle
+            let amount = (35000) * x;
+            let interest = (3780 + (42 * (m - 180))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 210 && m < 240) {
+            // 8th cycle
+            let amount = (40000) * x;
+            let interest = (5040 + (48 * (m - 210))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 240 && m < 271) {
+            // 9th cycle
+            let amount = (45000) * x;
+            let interest = (6480 + (54 * (m - 240))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 270 && m < 301) {
+            // 10th cycle
+            let amount = (50000) * x;
+            let interest = (8100 + (60 * (m - 270))) * x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 300 && m < 331) {
+            // 11th cycle
+            let amount = (55000) * x;
+            let interest = (9900 + (66 * (m - 300))) ^ x;
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m > 330 && m < 366) {
+            // 12th cycle
+            let amount = (60000) * x;
+            let interest = (11880 + (72 * (m - 330)) * x);
+            a = amount + interest;
+            let lq = a - (0.2 * a);
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +lq);
+            console.log(o);
+        } else if (o == "Corpers Plan" && m == 366) {
+            // cash out
+            let amount = (60000) * x;
+            let interest = (11880 + (72 * (m - 330)) * x);
+            a = amount + interest;
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log(o);
+            }
+    }
+
+       
+     
+    
+</script>
+</body>
+</html>
