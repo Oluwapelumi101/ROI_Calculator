@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- <link rel="stylesheet" href="styles.css"> -->
+
+<style>
+   .sectionOne {
+       display: grid;
+       padding: 1em;
+       background: #f9f9f9;
+       border: 1px solid #c1c1c1;
+       margin: 2rem auto 0 auto;
+       max-width: 210px;
+       padding: 1em;
+   }
+
+   .roi {
+   }
+
+   .input {
+       background: #fff;
+   }
+
+   button {
+       background: lightgrey;
+   }
+
+   button:hover {
+       background: gold;
+   }
+
+   .button, .input {
+    padding: 0.5em 0.5em 0.5em 0;
+   }
+   
+   select:focus, input:focus {
+       outline: 3px solid gold;
+    }
+    
+  
+
+  
+
+ 
+
+    
+
+    
+ 
+</style> 
+</head>
+
+<body>
+    <section class="sectionOne">
+    <form id = "form">
+        <div class= "roi">
+            <h3>Return on Investment</h3>
+        </div>
+
+        <!-- Packages -->
+        <div class="label">
+        <label class="text" id="text1">Choose a sponsorship package</label>
+        </div>
+
+        <div class="input">
+        <select id="package">
+            <option disabled selected value> -- select an option -- </option>
+            <option value="standard">Standard Package</option>
+            <option value="military">Military Standard</option>
+            <option value="term">Term Investment</option>
+            <option value="starter">Starter Plan</option>
+            <option value="basal 360">Basal 360</option>
+            <option value="basal 180">Basal 180</option>
+            <option value="basal 90">Basal 90</option>
+            <option value="reduced">Reduced Package</option>
+            <option value="studentStandard">Student Standard</option>
+            <option value="studentBasal">Student Basal</option>
+            <option value="corper">Corpers Plan</option>     
+        </select>
+        </div>
+
+        <div class="label">
+            <label class="text" id="text2">Enter number of slots</label>
+        </div>
+
+        <div class="input">
+            <input id="num" type="number" oninvalid="this.setCustomValidity('Minimuim investment for this package is ₦50,000')"
+            oninput="this.setCustomValidity('')"  placeholder="Number of slots">
+        </div>
+
+        <div class="label">
+            <label class="text" id = "text3" >Pick start date</label>
+        </div>
+
+        <div class="input">
+        <input type ="date" id = "day1">
+        </div>
+
+        <div class="label">
+            <label class="text" id = "text4">Pick end date</label>
+        </div>
+
+        <div class="input">
+            <input type ="date" id = "day2">
+        </div>
+        
+        <div class= "button">
+            <button type="submit" id="sub">Calculate</button>
+        </div>
+    </form>
+    </section>
+
+    <section id="displays">
+        <div id="demos">
+            <div>
+                <h3 id="demo1">Payout</h3>
+                <p class="reply" id="reply1">reply1</p>
+            </div>
+            
+            <div>
+                <h4 id="demo3">Interest accrued</h4>
+                <p class="reply" id="reply2">reply2</p>
+            </div>
+            <div>
+                <h4 id="demo2">Total amount contributed</h4>
+                <p class="reply" id="reply3">reply3</p>
+            </div>
+            <div>
+                <h4 id="demo4">Liquidation value</h4>
+                <p class="reply" id="reply4">reply4</p>
+            </div>
+        </div>
+  <!--       <div id="replys">
+            <p class="reply" id="reply1">reply1</p>
+            <p class="reply" id="reply2">reply2</p>
+            <p class="reply" id="reply3">reply3</p>
+            <p class="reply" id="reply4">reply4</p>
+        </div>     -->
+    </section>
+
+<script>
+    let form = document.getElementById("form");
+    let val = document.getElementById("num");
+    let a, interest;
+    var start = document.getElementById("day1");
+    var stop = document.getElementById("day2");
+
+    form.addEventListener("submit", cal);
+
+    function cal(e) {
+      
+        e.preventDefault();
+        var x = document.getElementById("package");
+        var i = x.selectedIndex;
+        var package = x.options[i].text;
+        var num = parseFloat(val.value);
+
+        let startDate = new Date(start.value);
+        let stopDate = new Date(stop.value);
+        let dateMonth = startDate.getMonth();
+        let yyyy = startDate.getFullYear();
+        let mm = startDate.getMonth() + 1;
+        let dd = startDate.getDate();
+        let days;
+        days = Math.floor((Date.UTC(stopDate.getFullYear(), stopDate.getMonth(), stopDate.getDate()) 
+        - Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()) ) /(1000 * 60 * 60 * 24));
+        console.log(days);
+ 
+        // the math
+         if (num == '') {  
+           console.log("Please enter number of slot");
+
+        } else if (days == '') {
+            console.log("Please enter the duration of investment");
+
+            // Standard Package
+        // } else if (o == "Standard Package") {
+        //     console.log("Minimuim investment allowed this package is 50,000");
+        //     let endDate = (yyyy+1)+'-'+mm+'-'+(dd+1);
+        //     console.log(endDate)
+        //     document.getElementById("day2").setAttribute("max", endDate)
+
+        } else if (package === "Standard Package" && days < 91 ) {            
+            let slotValue = 50000 * num;
+            let d = 0.00123 * slotValue;
+            a = (slotValue) + ((days-1) * d);
+            let liquidation = a - (0.2 * a);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;                
+          /*   console.log(a);
+            console.log("Liquidation " +liquadation);
+            console.log(package); */
+        } else if (package == "Standard Package" && days > 90) {
+            let slotValue = 50000 * num;
+            let d = 0.00123 * slotValue;
+            a = (slotValue) + ((days-1) * d);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+          /*   
+            console.log(a);
+            console.log(package);        
+ */
+            // Military Standard
+        } else if (package == "Military Standard" && days < 91) {
+            let slotValue = 50000 * num;
+            let d = 0.00138 * slotValue;
+            a = (slotValue) + ((days-1) * d);
+            let liquidation = a - (0.15 * a);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;  
+            /* console.log(a);
+            console.log("liquidation " + liquadation);
+            console.log(package);    */ 
+        } else if (package === "Military Standard") {
+            let slotValue = 50000 * num;
+            let d = 0.00138 * slotValue;
+            a = (slotValue) + ((days-1) * d);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            /* console.log(a);
+            console.log(o); */
+            
+            // Basal Plan
+        } else if (package == "Basal 360" && days < 366 ) {
+            let slotValue = 500 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (days * slotValue);
+            let interest = ((days/2) * ((2 * d) + ((days - 1)*(d))));
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+           /*  console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +liquadation);
+            console.log(o); */
+        } else if (package == "Basal 360" && days > 365 && days < 395) {
+            // 2nd cycle
+            let slotValue = 500 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (365 * slotValue);
+            let interest = ((365/2) * ((2 * d) + ((365 - 1)*(d))));
+            let newDays = days - 365
+            let newInterest = (interest + 219) + ((newDays -1) * (219));
+            a = amount + newInterest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = newInterest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+           /*  console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + newInterest);
+            console.log("Liquidation " +liquadation);
+            console.log(package); */
+        } else if (package == "Basal 360" && days == 395) {
+            let slotValue = 500 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (365 * slotValue);
+            let interest = ((365/2) * ((2 * d) + ((365 - 1)*(d))));
+            let newDays = days - 365
+            let newInterest = (interest + 219) + ((newDays -1) * (219));
+            a = amount + newInterest;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = newInterest;
+            document.getElementById("reply3").innerHTML = amount;            
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + newInterest);
+            console.log(package); */
+         
+
+            // Basal 180
+        } else if (package == "Basal 180" && days < 180 ) {
+            let slotValue = 500 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (days * slotValue);
+            let interest = ((days/2) * ((2 * d) + ((days - 1)*(d))));
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+          /*   console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquadation);
+            console.log(package);  */     
+        }  else if (package == "Basal 180" && days == 180 ) {
+            let slotValue = 500 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (num * slotValue);
+            let interest = ((days/2) * ((2 * d) + ((days - 1)*(d))));
+            a = amount + interest;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = newInterest;
+            document.getElementById("reply3").innerHTML = amount;    
+         /*    console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log(package);    */
+
+
+            // Basal 90
+        } else if (package == "Basal 90" && days < 90 ) {
+            let slotValue = 500 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (days * slotValue);
+            let interest = ((days/2) * ((2 * d) + ((days - 1)*(d))));
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +liquidation);
+            console.log(package);      
+        }  else if (package == "Basal 90" && days == 90 ) {
+            let slotValue = 500 * x;
+            let d = 0.0012 * slotValue;
+            let amount = (days * slotValue);
+            let interest = ((days/2) * ((2 * d) + ((days - 1)*(d))));
+            a = amount + interest;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;  
+          /*   console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log(package);  */                        
+
+            
+            // Term Investment 
+        } else if (package == "Term Investment" && days < 183) {
+            // 1st cycle
+            a = (25000) + ((days-1) * 27.53);
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let interest = total - slotValue;
+            let liquidation = total - (total * 0.2);
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+           /*  console.log("invested " + slotValue);
+            console.log("total " + total);
+            console.log("Liquidation Value " + liquidation)
+            console.log(package); */
+        } else if (package == "Term Investment" && days > 182 && days < 366)  {
+            // cycle 2
+            let newDays = days - 182;
+             a = ((25000) + ((183-1) * 27.53)) + ((newDays - 1) * (55.06))
+             let slotValue = 25000 * num;
+            let total = a * num;
+            let liquidation = total - (total * 0.2);
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;
+           /*  console.log("invested " + slotValue);
+            console.log("total " + total);
+            console.log("Liquidation Value " + liquidation);
+            console.log(package); */
+        } else if (package == "Term Investment" && days > 365 && days < 550) {
+            // 3rd cycle
+            let newDays = days - 365;
+            a = (((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((newDays - 1) * (82.59));
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let liquidation = total - (total * 0.2);
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;
+            /* console.log("invested " + slotValue);
+            console.log("total " + total);
+            console.log("Liquidation Value " + liquidation); 
+            console.log(package); */
+        } else if (package == "Term Investment" && days > 549 && days < 730) {
+            // 4th cycle
+            let newDays = days - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((newDays -1) * (110.12)); 
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let liquidation = total - (total * 0.2);
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;
+           /*  console.log("invested " + slotValue);
+            console.log("total " + total);
+            console.log("Liquidation Value " + liquidation); 
+            console.log(package); */
+        } else if (package == "Term Investment" && days == 730) {
+            //final day
+            let newDays = days - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((newDays -1) * (110.12)); 
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+         /*    console.log("invested " + slotValue);
+            console.log("total " + total);
+            console.log(package);     */
+
+            // Starter Plan 
+        } else if (package == "Starter Plan" && days < 183) {
+            // 1st cycle
+            a = (25000) + ((days-1) * 27.53);
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let liquidation = total - (total * 0.15);
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;
+            /* console.log("invested " + slotValue);
+            console.log("total " + total);
+            console.log("Liquidation Value "+ liquidation); 
+            console.log(package); */
+            } else if (package == "Starter Plan" && days > 182 && days < 366)  {
+            // cycle 2
+            let newDays = days - 182;
+            a = ((25000) + ((183-1) * 27.53)) + ((newDays - 1) * (55.06))
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let liquidation = total - (total * 0.15);
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;
+          /*   console.log("invested " + slotValue);
+            console.log("total " + total); 
+            console.log("Liquidation Value " + liquidation); 
+            console.log(package); */
+        } else if (package == "Starter Plan" && days > 365 && days < 550) {
+            // 3rd cycle
+            let newDays = days - 365;
+            a = (((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((newDays - 1) * (82.59));
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let liquidation = total - (total * 0.15);
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;
+           /*  console.log("invested " + slotValue);
+            console.log("total " + total);
+            console.log("Liquidation Value " + liquidation); 
+            console.log(package); */
+        } else if (package == "Starter Plan" && days > 549 && days < 730) {
+            // 4th cycle
+            let newDays = days - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((newDays -1) * (137.65));
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let liquidation = total - (total * 0.15);
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;
+            console.log("invested " + slotValue);
+            console.log("total " + total);     
+            console.log("Liquidation Value " + liquidation); 
+            console.log(package);
+        } else if (package == "Starter Plan" && days == 730) {
+            // final day
+            let newDays = days - 549;
+            a = ((((25000) + ((183-1) * 27.53)) + ((184 - 1) * (55.06))) +
+                ((185 - 1) * (82.59))) + ((newDays -1) * (137.65));
+            let slotValue = 25000 * num;
+            let total = a * num;
+            let interest = total - slotValue;
+            document.getElementById("reply1").innerHTML = total;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            console.log("invested " + slotValue);
+            console.log("total " + total);     
+            console.log(package);
+
+            // Reduced Package
+        } else if (package == "Reduced Package" && days < 91 ) {            
+            let slotValue = 2000 * num;
+            let d = 0.00123 * slotValue;
+            a = (slotValue) + ((days - 1) * d);
+            let liquidation = a - (0.2 * a);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation;  
+           /*  console.log(a);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Reduced Package" && days > 90) {
+            let slotValue = 2000 * x;
+            let d = 0.00123 * slotValue;
+            a = (slotValue) + ((days-1) * d);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+      /*       console.log(a);
+            console.log(package);   */
+
+                 // Student Package
+        } else if (package == "Student Package" && days < 91 ) {            
+            let slotValue = 5000 * num;
+            let d = 0.00123 * slotValue;
+            a = (slotValue) + ((days-1) * d);
+            let liquidation = a - (0.2 * a);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+           /*  console.log(a);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Student Package" && days > 90) {
+            let slotValue = 5000 * num;
+            let d = 0.00123 * slotValue;
+            a = (slotValue) + ((days-1) * d);
+            interest = a - slotValue;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = slotValue;            
+          /*   console.log(a);
+            console.log(package); */  
+
+            
+            // Student Basal 
+        } else if (package == "Student Basal" && days < 366 ) {
+            let slotValue = 200 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (days * slotValue);
+            let interest = ((days/2) * ((2 * d) + ((days - 1)*(d))));
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Student Basal" && days > 365 && days < 395) {
+            // 2nd cycle
+            let slotValue = 200 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (365 * slotValue);
+            let interest = ((365/2) * ((2 * d) + ((365 - 1)*(d))));
+            let newDays = days - 365;
+            let newInterest = (interest + 219) + ((newDays - 1) * (219));
+            a = amount + newInterest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = newInterest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + newInterest);
+            console.log("Liquidation " + liquidation);
+            console.log(o); */
+        } else if (package == "Student Basal" && days == 395) {
+            let slotValue = 200 * num;
+            let d = 0.0012 * slotValue;
+            let amount = (365 * slotValue);
+            let interest = ((365/2) * ((2 * d) + ((365 - 1)*(d))));
+            let newDays = days - 365
+            let newInterest = (interest + 219) + ((newDays -1) * (219));
+            a = amount + newInterest;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = newInterest;
+            document.getElementById("reply3").innerHTML = amount;            
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + newInterest);
+            console.log(package); */
+        
+
+           // Corpers Plan
+        } else if (package == "Corpers Plan" && days < 31 ) {
+            // 1st cycle
+            amount = 5000 * num;
+            let interest = (days * 6) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+          /*   console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days > 30 && days < 61) {
+            // 2nd cycle
+            let amount = (10000) * num;
+            let interest = (180 + (12 * (days - 30))) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+          /*   console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(o); */
+        } else if (package == "Corpers Plan" && days > 60 && days < 91) {
+            // 3rd cycle
+            let amount = (15000) * num;
+            let interest = (540 + (18 * (days - 60))) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " +liquidation);
+            console.log(package);
+        } else if (package == "Corpers Plan" && days > 90 && days < 121) {
+            // 4th cycle
+            let amount = (20000) * num;
+            let interest = (1080 + (24 * (days - 90))) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days > 120 && days < 151) {
+            // 5th cycle
+            let amount = (25000) * num;
+            let interest = (1800 + (30 * (days - 120))) * num;
+            a = amount + interest;
+            let liquadation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+           /*  console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days > 150 && days < 181) {
+            // 6th cycle
+            let amount = (30000) * num;
+            let interest = (2700 + (36 * (days - 150))) * x;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days > 180 && days < 211) {
+            // 7th cycle
+            let amount = (35000) * num;
+            let interest = (3780 + (42 * (days - 180))) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+          /*   console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package== "Corpers Plan" && days > 210 && days < 240) {
+            // 8th cycle
+            let amount = (40000) * num;
+            let interest = (5040 + (48 * (days - 210))) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && m > 240 && m < 271) {
+            // 9th cycle
+            let amount = (45000) * num;
+            let interest = (6480 + (54 * (days - 240))) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days > 270 && days < 301) {
+            // 10th cycle
+            let amount = (50000) * num;
+            let interest = (8100 + (60 * (days - 270))) * num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days > 300 && days < 331) {
+            // 11th cycle
+            let amount = (55000) * num;
+            let interest = (9900 + (66 * (days - 300))) ^ num;
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days > 330 && days < 366) {
+            // 12th cycle
+            let amount = (60000) * num;
+            let interest = (11880 + (72 * (days - 330)) * num);
+            a = amount + interest;
+            let liquidation = a - (0.2 * a);
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+            document.getElementById("reply4").innerHTML = liquidation; 
+            /* console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log("Liquidation " + liquidation);
+            console.log(package); */
+        } else if (package == "Corpers Plan" && days == 366) {
+            // cash out
+            let amount = (60000) * num;
+            let interest = (11880 + (72 * (days - 330)) * num);
+            a = amount + interest;
+            document.getElementById("reply1").innerHTML = a;
+            document.getElementById("reply2").innerHTML = interest;
+            document.getElementById("reply3").innerHTML = amount;            
+          /*   console.log("total "+ a);
+            console.log("contributed " + amount);
+            console.log("interest accrued " + interest);
+            console.log(package); */
+            }
+    }
+
+       
+     
+    
+</script>
+</body>
+</html>
